@@ -35,10 +35,6 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    // 로그인 타입 (ex.kakao, 일반) -> 질문 필요
-    @Column(length = 10)
-    private String loginType;
-
     // 프로필 이미지
     @Column()
     private String profileImage;

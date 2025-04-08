@@ -13,12 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 public class UserLimitsEntity {
-    // 이용자 제한 식별 번호 -> 이거 필요한가?
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int limitId;
-
     // 제한된 사용자
+    @Id
     @OneToOne
     @JoinColumn(name = "users")
     private UserEntity userId;
