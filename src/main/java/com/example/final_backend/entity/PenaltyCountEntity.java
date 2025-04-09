@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-@Table(name="counts")
+@Table(name="penaltycounts")
 @NoArgsConstructor
 @AllArgsConstructor
 public class PenaltyCountEntity {
