@@ -17,6 +17,7 @@ public class UserEntity {
     // 사용자 식별 번호
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "userId")
     private int userId;
 
     //  사용자 ID
@@ -36,7 +37,6 @@ public class UserEntity {
     private String pw;
 
     // 프로필 이미지
-    @Column(length =255)
     private String profileImage;
 
     // 회원 가입 일자
@@ -48,14 +48,14 @@ public class UserEntity {
 
 
     // 게시물과 1대다 양방향 연결
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
     private List<PostEntity> post;
 
     // 댓글과 1대다 양방향 연결
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
-    private List<CommentEntity> comment;
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    private List<CommentEntity> comments;
 
     // 패널티 횟수 1대1 양방향 연결
-    @OneToOne(mappedBy = "users", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL)
     private PenaltyCountEntity penaltyCount;
 }
