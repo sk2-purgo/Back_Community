@@ -25,6 +25,6 @@ public class UserLimitsEntity {
     // 제한 끝나는 일자
     private LocalDateTime endDate;
 
-    // 제한 여부 (기본 true)
+    // 제한 여부
     private Boolean isActive;
 }

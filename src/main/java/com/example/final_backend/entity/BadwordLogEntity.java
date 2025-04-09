@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="badwordlogs")
+@Table(name="logs")
 @Data
 public class BadwordLogEntity {
     // 비속어 사용 로그 식별 번호
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int logId;
+    private int LogId;
 
     // 사용자 식별 번호
     @ManyToOne
@@ -34,12 +34,7 @@ public class BadwordLogEntity {
     private CommentEntity commentId;
 
     // 사용한 비속어
-    @Column(length = 50)
-    private String originalWord;
-
-    // 대체어
-    @Column(length = 50)
-    private String filteredWord;
+    private String detectedWord;
 
     // 비속어 사용 일자
     private LocalDateTime detectedAt;

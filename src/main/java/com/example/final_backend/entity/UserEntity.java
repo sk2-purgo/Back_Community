@@ -25,18 +25,18 @@ public class UserEntity {
 
     // 사용자 닉네임
     @Column(nullable = false, length = 10)
-    private String username;
+    private String userName;
 
     // 사용자 인증 이메일
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 40)
     private String email;
 
     // 사용자 비밀번호
     @Column(nullable = false)
-    private String pw;
+    private String password;
 
     // 프로필 이미지
-    @Column(length =255)
+    @Column()
     private String profileImage;
 
     // 회원 가입 일자
