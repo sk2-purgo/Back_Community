@@ -56,10 +56,10 @@ public class UserEntity {
     private List<CommentEntity> comments;
 
     // 패널티 횟수 1대1 양방향 연결
-    @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private PenaltyCountEntity penaltyCount;
 
     // 제한된 사용자 1대1 양방향 연결
-    @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserLimitsEntity limits;
 }
