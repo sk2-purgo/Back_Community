@@ -1,8 +1,10 @@
 package com.example.final_backend.service;
 
 import com.example.final_backend.Repository.UserRepository;
+import com.example.final_backend.dto.LoginRequestDto;
 import com.example.final_backend.dto.UserDto;
 import com.example.final_backend.entity.UserEntity;
+import com.example.final_backend.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -23,7 +25,10 @@ import java.time.LocalDateTime;
 public class UserService {
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
+    private final JwtUtil jwtUtil;
 
+
+    // 회원가입
     @Transactional
     public void signup(UserDto dto) {
         // 이메일 중복 확인
@@ -47,6 +52,7 @@ public class UserService {
         sendWelcomeEmail(user.getEmail(), user.getUsername());
     }
 
+    // 이메일 인증 전송
     private void sendWelcomeEmail(String email, String username) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
@@ -54,4 +60,20 @@ public class UserService {
         message.setText(username + "님, 환영합니다. 가입을 축하드립니다!");
         mailSender.send(message);
     }
+
+    // 로그인
+    public String login(LoginRequestDto dto) {
+        UserEntity user = userRepository.findById(dto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("ID가 존재하지 않습니다."));
+
+        if (!user.getPw().equals(dto.getPw())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return jwtUtil.createToken(user.getId());  // ID 기준으로 JWT 생성
+    }
+
+
+
+
 }

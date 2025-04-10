@@ -1,5 +1,6 @@
 package com.example.final_backend.controller;
 
+import com.example.final_backend.dto.LoginRequestDto;
 import com.example.final_backend.dto.UserDto;
 import com.example.final_backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +21,14 @@ public class UserController {
         userService.signup(dto);
         return ResponseEntity.ok("회원가입이 완료되었습니다");
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto dto) {
+        String token = userService.login(dto);
+
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + token)
+                .body("로그인 성공");
+    }
+
 }
