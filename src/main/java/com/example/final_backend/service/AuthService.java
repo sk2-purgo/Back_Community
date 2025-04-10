@@ -1,8 +1,8 @@
 package com.example.final_backend.service;
 
-import com.example.final_backend.Repository.UserRepository;
+import com.example.final_backend.Repository.AuthRepository;
 import com.example.final_backend.dto.LoginRequestDto;
-import com.example.final_backend.dto.UserDto;
+import com.example.final_backend.dto.AuthDto;
 import com.example.final_backend.entity.UserEntity;
 import com.example.final_backend.util.JwtUtil;
 import jakarta.transaction.Transactional;
@@ -22,17 +22,17 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
-    private final UserRepository userRepository;
+public class AuthService {
+    private final AuthRepository authRepository;
     private final JavaMailSender mailSender;
     private final JwtUtil jwtUtil;
 
 
     // 회원가입
     @Transactional
-    public void signup(UserDto dto) {
+    public void signup(AuthDto dto) {
         // 이메일 중복 확인
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+        if (authRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
 
@@ -46,7 +46,7 @@ public class UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
-        userRepository.save(user);
+        authRepository.save(user);
 
         // 이메일 전송
         sendWelcomeEmail(user.getEmail(), user.getUsername());
@@ -63,7 +63,7 @@ public class UserService {
 
     // 로그인
     public String login(LoginRequestDto dto) {
-        UserEntity user = userRepository.findById(dto.getId())
+        UserEntity user = authRepository.findById(dto.getId())
                 .orElseThrow(() -> new IllegalArgumentException("ID가 존재하지 않습니다."));
 
         if (!user.getPw().equals(dto.getPw())) {
@@ -74,6 +74,7 @@ public class UserService {
     }
 
 
-
-
+    public boolean isIdDuplicate(String id) {
+        return authRepository.findById(id).isPresent();
+    }
 }

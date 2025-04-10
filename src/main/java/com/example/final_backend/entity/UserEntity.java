@@ -25,11 +25,11 @@ public class UserEntity {
     private String id;
 
     // 사용자 닉네임
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false)
     private String username;
 
     // 사용자 인증 이메일
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String email;
 
     // 사용자 비밀번호
@@ -58,4 +58,8 @@ public class UserEntity {
     // 패널티 횟수 1대1 양방향 연결
     @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL)
     private PenaltyCountEntity penaltyCount;
+
+    // 제한된 사용자 1대1 양방향 연결
+    @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL)
+    private UserLimitsEntity limits;
 }

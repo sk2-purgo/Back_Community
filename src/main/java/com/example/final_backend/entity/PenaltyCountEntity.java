@@ -9,13 +9,14 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-@Table(name="penaltycounts")
+@Table(name="penaltyCounts")
 @NoArgsConstructor
 @AllArgsConstructor
 public class PenaltyCountEntity {
     // 사용자 식별 번호
     @Id
     @OneToOne
+    @MapsId
     @JoinColumn(name="users", insertable = false, updatable = false)
     private UserEntity userId;
 

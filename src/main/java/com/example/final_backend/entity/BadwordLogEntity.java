@@ -34,11 +34,9 @@ public class BadwordLogEntity {
     private CommentEntity commentId;
 
     // 사용한 비속어
-    @Column(length = 50)
     private String originalWord;
 
     // 대체어
-    @Column(length = 50)
     private String filteredWord;
 
     // 비속어 사용 일자

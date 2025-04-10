@@ -25,11 +25,9 @@ public class PostEntity {
     private UserEntity userId;
 
     // 게시물 제목
-    @Column(length = 50)
     private String title;
 
     // 게시물 내용
-    @Column(length = 1000)
     private String content;
 
     // 게시물 생성 일자
@@ -39,7 +37,6 @@ public class PostEntity {
     private LocalDateTime updatedAt;
 
     // 게시물 이미지
-    @Column()
     private String image;
 
     // 게시물 조회수

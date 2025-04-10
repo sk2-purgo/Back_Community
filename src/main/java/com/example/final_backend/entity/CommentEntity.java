@@ -28,7 +28,6 @@ public class CommentEntity {
     private PostEntity postId;
 
     // 댓글 내용
-    @Column(nullable = false, length = 1000)
     private String content;
 
     // 댓글 생성 일자
