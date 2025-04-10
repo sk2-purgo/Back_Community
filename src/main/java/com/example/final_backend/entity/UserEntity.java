@@ -1,19 +1,18 @@
 package com.example.final_backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+@Builder
+public class UserEntity{
     // 사용자 식별 번호
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +20,6 @@ public class UserEntity {
     private int userId;
 
     //  사용자 ID
-    @Column(length = 20)
     private String id;
 
     // 사용자 닉네임
@@ -44,7 +42,6 @@ public class UserEntity {
 
     // 개인정보 수정 일자
     private LocalDateTime updatedAt;
-
 
 
     // 게시물과 1대다 양방향 연결

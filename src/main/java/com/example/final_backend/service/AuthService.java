@@ -2,11 +2,17 @@ package com.example.final_backend.service;
 
 import com.example.final_backend.Repository.AuthRepository;
 import com.example.final_backend.dto.AuthDto;
+import com.example.final_backend.dto.JwtDto;
 import com.example.final_backend.entity.UserEntity;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +29,9 @@ import java.time.LocalDateTime;
 public class AuthService {
     private final AuthRepository authRepository;
     private final JavaMailSender mailSender;
-
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     // 회원가입
     @Transactional
@@ -38,7 +46,7 @@ public class AuthService {
         user.setId(dto.getId());
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
-        user.setPw(dto.getPw()); // 추후에 암호화 필요
+        user.setPw(passwordEncoder.encode(dto.getPw())); // 비밀번호 암호화
         user.setProfileImage(dto.getProfileImage());
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
@@ -47,6 +55,33 @@ public class AuthService {
 
         // 이메일 전송
         sendWelcomeEmail(user.getEmail(), user.getUsername());
+    }
+
+    // 로그인
+    public JwtDto.TokenResponse login(JwtDto.LoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getId(), // 이메일 대신 ID로 변경
+                            loginRequest.getPw()
+                    )
+            );
+
+            UserEntity user = authRepository.findById(loginRequest.getId()) // 이메일 대신 ID로 검색
+                    .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+            String accessToken = jwtService.generateToken(user);
+
+            return JwtDto.TokenResponse.builder()
+                    .accessToken(accessToken)
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .tokenType("Bearer")
+                    .build();
+
+        } catch (AuthenticationException e) {
+            throw new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.");
+        }
     }
 
     // 이메일 인증 전송
@@ -64,6 +99,7 @@ public class AuthService {
     }
 
     // 닉네임 조회
-    public boolean isNameDuplicate(String username) { return authRepository.findByUsername(username).isPresent();}
-
+    public boolean isNameDuplicate(String username) {
+        return authRepository.findByUsername(username).isPresent();
+    }
 }
