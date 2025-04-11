@@ -1,6 +1,6 @@
 package com.example.final_backend.service;
 
-import com.example.final_backend.Repository.AuthRepository;
+import com.example.final_backend.repository.AuthRepository;
 import com.example.final_backend.dto.AuthDto;
 import com.example.final_backend.dto.JwtDto;
 import com.example.final_backend.entity.UserEntity;
@@ -17,13 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-/**
- * 1. email 중복 확인 따로 빼기
- * 2. 비번 암호화 저장
- * 3. 이메일 확인 시 회원가입되도록
- * 4. 회원가입 시 프로필 이미지 필수 x
- */
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -32,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RedisService redisService;
 
     // 회원가입
     @Transactional
@@ -62,18 +56,20 @@ public class AuthService {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginRequest.getId(), // 이메일 대신 ID로 변경
+                            loginRequest.getId(),
                             loginRequest.getPw()
                     )
             );
 
-            UserEntity user = authRepository.findById(loginRequest.getId()) // 이메일 대신 ID로 검색
+            UserEntity user = authRepository.findById(loginRequest.getId())
                     .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-            String accessToken = jwtService.generateToken(user);
+            String accessToken = jwtService.generateAccessToken(user);
+            String refreshToken = jwtService.generateRefreshToken(user);
 
             return JwtDto.TokenResponse.builder()
                     .accessToken(accessToken)
+                    .refreshToken(refreshToken)
                     .id(user.getId())
                     .username(user.getUsername())
                     .tokenType("Bearer")
@@ -81,6 +77,50 @@ public class AuthService {
 
         } catch (AuthenticationException e) {
             throw new IllegalArgumentException("아이디 또는 비밀번호가 올바르지 않습니다.");
+        }
+    }
+
+    // 토큰 재발급
+    public JwtDto.TokenResponse refreshToken(String refreshToken) {
+        // 1. RefreshToken 유효성 검증
+        String userId = jwtService.extractUsername(refreshToken);
+        if (userId == null) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+
+        // 2. Redis에 저장된 RefreshToken과 비교
+        if (!jwtService.validateRefreshToken(refreshToken, userId)) {
+            throw new IllegalArgumentException("RefreshToken이 유효하지 않습니다.");
+        }
+
+        // 3. 사용자 조회
+        UserEntity user = authRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 4. 새로운 AccessToken 발급
+        String newAccessToken = jwtService.reissueAccessToken(user);
+
+        // 5. RefreshToken 재발급 (필요시)
+        // - 여기서는 재발급하지 않고 기존 RefreshToken 유지
+
+        return JwtDto.TokenResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken) // 기존 RefreshToken 유지
+                .id(user.getId())
+                .username(user.getUsername())
+                .tokenType("Bearer")
+                .build();
+    }
+
+    // 로그아웃
+    public void logout(String accessToken) {
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        }
+
+        String userId = jwtService.extractUsername(accessToken);
+        if (userId != null) {
+            jwtService.logout(userId, accessToken);
         }
     }
 

@@ -14,4 +14,6 @@ public class JwtConfig {
     private String secret;
     // AccessToken 유효 기간 지정 (1시간)
     private long expirationMs = 3600000; // 기본값 1시간
+    // RefreshToken 유효 기간 지정 (7일)
+    private long refreshExpirationMs = 604800000; // 7일
 }

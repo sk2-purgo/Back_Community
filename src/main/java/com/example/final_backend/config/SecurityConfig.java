@@ -38,10 +38,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/signup", "/auth/checkId", "/auth/checkName").permitAll()
+                        .requestMatchers("/auth/login", "/auth/signup", "/auth/checkId", "/auth/checkName", "/auth/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore( jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

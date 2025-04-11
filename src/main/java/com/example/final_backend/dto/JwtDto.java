@@ -21,8 +21,16 @@ public class JwtDto {
     @NoArgsConstructor
     public static class TokenResponse {
         private String accessToken;
+        private String refreshToken;
         private String tokenType;
         private String id;
         private String username;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RefreshTokenRequest {
+        private String refreshToken;
     }
 }

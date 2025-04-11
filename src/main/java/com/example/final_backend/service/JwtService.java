@@ -22,6 +22,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JwtService {
     private final JwtConfig jwtConfig;
+    private final RedisService redisService;
     private SecretKey key;
 
     @PostConstruct
@@ -29,22 +30,45 @@ public class JwtService {
         this.key = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(UserEntity userEntity) {
+    public String generateAccessToken(UserEntity userEntity) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", userEntity.getUsername());
         claims.put("email", userEntity.getEmail());
+        claims.put("tokenType", "access");
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userEntity.getId()) // 이메일 대신 ID를 subject로 사용
+                .setSubject(userEntity.getId())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpirationMs()))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    public String generateRefreshToken(UserEntity userEntity) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("tokenType", "refresh");
+
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userEntity.getId())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getRefreshExpirationMs()))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        // Redis에 RefreshToken 저장
+        redisService.saveRefreshToken(userEntity.getId(), refreshToken, jwtConfig.getRefreshExpirationMs());
+
+        return refreshToken;
+    }
+
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject); // 이제 이 메서드는 사용자 ID를 반환합니다
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractTokenType(String token) {
+        return extractClaim(token, claims -> claims.get("tokenType", String.class));
     }
 
     public Date extractExpiration(String token) {
@@ -68,8 +92,51 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String id = extractUsername(token); // 이제 ID를 추출합니다
-        return (id.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public Boolean validateAccessToken(String token, UserDetails userDetails) {
+        final String userId = extractUsername(token);
+        final String tokenType = extractTokenType(token);
+
+        // AccessToken 블랙리스트 확인
+        if (redisService.isAccessTokenBlacklisted(userId, token)) {
+            return false;
+        }
+
+        return (userId.equals(userDetails.getUsername()) &&
+                "access".equals(tokenType) &&
+                !isTokenExpired(token));
+    }
+
+    public Boolean validateRefreshToken(String token, String userId) {
+        try {
+            final String tokenUserId = extractUsername(token);
+            final String tokenType = extractTokenType(token);
+
+            // Redis에서 저장된 refreshToken 가져오기
+            String storedToken = redisService.getRefreshToken(userId);
+
+            return (tokenUserId.equals(userId) &&
+                    "refresh".equals(tokenType) &&
+                    !isTokenExpired(token) &&
+                    token.equals(storedToken));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // 토큰 재발급 (RefreshToken을 사용해 AccessToken 재발급)
+    public String reissueAccessToken(UserEntity userEntity) {
+        return generateAccessToken(userEntity);
+    }
+
+    // 로그아웃 처리 (RefreshToken 삭제 및 AccessToken 블랙리스트 등록)
+    public void logout(String userId, String accessToken) {
+        // RefreshToken 삭제
+        redisService.deleteRefreshToken(userId);
+
+        // AccessToken 블랙리스트에 추가 (만료시간까지만)
+        long expirationTime = extractExpiration(accessToken).getTime() - System.currentTimeMillis();
+        if (expirationTime > 0) {
+            redisService.blacklistAccessToken(userId, accessToken, expirationTime);
+        }
     }
 }

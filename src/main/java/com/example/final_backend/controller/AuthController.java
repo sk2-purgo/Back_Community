@@ -20,14 +20,41 @@ public class AuthController {
         return ResponseEntity.ok("회원가입이 완료되었습니다");
     }
 
-    // 로그인
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody JwtDto.LoginRequest loginRequest) {
-        JwtDto.TokenResponse response = authService.login(loginRequest);
+        try {
+            JwtDto.TokenResponse response = authService.login(loginRequest);
 
-        return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + response.getAccessToken())
-                .body("로그인 성공");
+            return ResponseEntity.ok()
+                    .header("Authorization", "Bearer " + response.getAccessToken())
+                    .header("Refresh-Token", response.getRefreshToken())
+                    .body("로그인 성공");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("로그인 실패");
+        }
+    }
+
+
+    @PostMapping("/refresh")
+    public ResponseEntity<String> refreshToken(@RequestBody JwtDto.RefreshTokenRequest request) {
+        try {
+            JwtDto.TokenResponse response = authService.refreshToken(request.getRefreshToken());
+
+            return ResponseEntity.ok()
+                    .header("Authorization", "Bearer " + response.getAccessToken())
+                    .header("Refresh-Token", response.getRefreshToken())
+                    .body("토큰 재발급 성공");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("토큰 재발급 실패");
+        }
+    }
+
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String accessToken) {
+        authService.logout(accessToken);
+        return ResponseEntity.ok("로그아웃 되었습니다.");
     }
 
     // 아이디 중복 검사

@@ -1,6 +1,6 @@
 package com.example.final_backend.service;
 
-import com.example.final_backend.Repository.AuthRepository;
+import com.example.final_backend.repository.AuthRepository;
 import com.example.final_backend.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -35,12 +35,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
-        String userId = jwtService.extractUsername(token); // 이제 사용자 ID를 추출합니다
+        String userId = jwtService.extractUsername(token);
 
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
 
-            if (jwtService.validateToken(token, userDetails)) {
+            // validateAccessToken 메서드는 블랙리스트 확인을 포함합니다
+            if (jwtService.validateAccessToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
