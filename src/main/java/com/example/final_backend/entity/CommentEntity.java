@@ -20,12 +20,12 @@ public class CommentEntity {
     // 사용자 식별 번호
     @ManyToOne
     @JoinColumn(name="users")
-    private UserEntity userId;
+    private UserEntity user;
 
     // 게시물 식별 번호
     @ManyToOne
-    @JoinColumn(name = "posts")
-    private PostEntity postId;
+    @JoinColumn(name = "postId")
+    private PostEntity post;
 
     // 댓글 내용
     private String content;
