@@ -43,7 +43,7 @@ public class PostEntity {
     private int count;
 
     // 댓글과 1대다 양방향 연결
-    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<CommentEntity> comment;
 
 }

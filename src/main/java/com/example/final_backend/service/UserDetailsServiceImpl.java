@@ -2,6 +2,7 @@ package com.example.final_backend.service;
 
 import com.example.final_backend.repository.AuthRepository;
 import com.example.final_backend.entity.UserEntity;
+import com.example.final_backend.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -23,10 +24,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         UserEntity user = authRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + id));
 
-        return new User(
-                user.getId(), // username 필드에 id 사용
-                user.getPw(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+        return new CustomUserDetails(user);
     }
 }

@@ -49,7 +49,7 @@ public class UserEntity{
     private List<PostEntity> post;
 
     // 댓글과 1대다 양방향 연결
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CommentEntity> comments;
 
     // 패널티 횟수 1대1 양방향 연결
