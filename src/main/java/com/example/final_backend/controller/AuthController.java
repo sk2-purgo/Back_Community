@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * /api/auth로 시작하는 인증 관련 REST API 제공하는 컨트롤러
+ */
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -22,6 +26,7 @@ public class AuthController {
         return ResponseEntity.ok("회원가입이 완료되었습니다");
     }
 
+    // 로그인
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody JwtDto.LoginRequest loginRequest) {
         try {
@@ -36,14 +41,14 @@ public class AuthController {
         }
     }
 
-
+    // Access 토큰 재발급(백엔드 테스트용)
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshToken(@RequestBody JwtDto.RefreshTokenRequest request) {
         try {
             JwtDto.TokenResponse response = authService.refreshToken(request.getRefreshToken());
 
             return ResponseEntity.ok()
-                    .header("Authorization", "Bearer " + response.getAccessToken())
+                    .header("Access-Token", "Bearer " + response.getAccessToken())
                     .header("Refresh-Token", response.getRefreshToken())
                     .body("토큰 재발급 성공");
         } catch (IllegalArgumentException e) {

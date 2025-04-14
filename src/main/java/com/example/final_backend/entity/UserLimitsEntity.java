@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * 사용자 권한 제한 Entity
+ */
+
 @Entity
 @Table(name="limits")
 @NoArgsConstructor
@@ -28,6 +32,6 @@ public class UserLimitsEntity {
     // 제한 끝나는 일자
     private LocalDateTime endDate;
 
-    // 제한 여부 (기본 true)
+    // 기능 사용 가능 여부 (기본 true)
     private Boolean isActive;
 }

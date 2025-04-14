@@ -18,6 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * JWT 토큰 생성 및 검증
+ * - AccessToken, RefreshToken 생성
+ * - AccessToken, RefreshToken 검증
+ * - AccessToken, RefreshToken 삭제 및 블랙리스트(기간제) 등록
+ * - AccessToken 재발급
+ */
+
 @Service
 @RequiredArgsConstructor
 public class JwtService {
@@ -30,6 +38,7 @@ public class JwtService {
         this.key = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes(StandardCharsets.UTF_8));
     }
 
+    // AccessToken 발급
     public String generateAccessToken(UserEntity userEntity) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", userEntity.getUsername());
@@ -45,6 +54,7 @@ public class JwtService {
                 .compact();
     }
 
+    // RefreshToken 발급 및 Redis에 저장
     public String generateRefreshToken(UserEntity userEntity) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("tokenType", "refresh");
@@ -63,6 +73,7 @@ public class JwtService {
         return refreshToken;
     }
 
+    // 토큰에서 subject(ID) 추출
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -92,6 +103,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
+    // 토큰 유효성 및 Redis 블랙리스트 여부 확인
     public Boolean validateAccessToken(String token, UserDetails userDetails) {
         final String userId = extractUsername(token);
         final String tokenType = extractTokenType(token);
@@ -106,6 +118,7 @@ public class JwtService {
                 !isTokenExpired(token));
     }
 
+    // 토큰과 Redis 저장 토큰 비교, 만료 여부 확인
     public Boolean validateRefreshToken(String token, String userId) {
         try {
             final String tokenUserId = extractUsername(token);

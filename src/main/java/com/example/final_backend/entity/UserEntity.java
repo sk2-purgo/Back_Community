@@ -5,6 +5,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 사용자 Entity
+ */
+
 @Entity
 @Table(name = "users")
 @Getter

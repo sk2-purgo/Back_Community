@@ -5,7 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 로그인 / 토큰 재발급 등에 사용하는 DTO 모음
+ */
+
 public class JwtDto {
+
+    // 로그인 요청
     @Data
     @Builder
     @AllArgsConstructor
@@ -15,6 +21,7 @@ public class JwtDto {
         private String pw;
     }
 
+    // JWT 응답 (Access, Refresh)
     @Data
     @Builder
     @AllArgsConstructor
@@ -27,6 +34,7 @@ public class JwtDto {
         private String username;
     }
 
+    // 토큰 재발급 요청청
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

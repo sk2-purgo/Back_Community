@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * 사용자 비속어 사용 확인 로그 Entity
+ */
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

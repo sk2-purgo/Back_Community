@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 게시물 Entity
+ */
+
 @Entity
 @Table(name="posts")
 @NoArgsConstructor

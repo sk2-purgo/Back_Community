@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.time.LocalDateTime;
 
+/**
+ * 사용자 관련 로직 처리 서비스
+ */
+
 @Service
 @RequiredArgsConstructor
 public class UserService {

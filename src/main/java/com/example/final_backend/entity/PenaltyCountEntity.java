@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * 패널티 횟수 Entity
+ */
+
 @Entity
 @Data
 @Table(name="penaltyCounts")

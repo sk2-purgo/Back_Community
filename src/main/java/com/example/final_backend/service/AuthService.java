@@ -17,6 +17,18 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * 사용자의 인증 로직 처리 서비스
+ * - 회원가입
+ * - 로그인
+ * - 로그아웃
+ * - 토큰 재발급
+ * - 닉네임 중복 확인
+ * - 아이디 중복 확인
+ * - 아이디 찾기
+ * - 비밀번호 재설정
+ */
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -54,6 +66,7 @@ public class AuthService {
     // 로그인
     public JwtDto.TokenResponse login(JwtDto.LoginRequest loginRequest) {
         try {
+            // authenticationManager를 이용해 ID/PW 인증 시도
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getId(),
@@ -64,6 +77,8 @@ public class AuthService {
             UserEntity user = authRepository.findById(loginRequest.getId())
                     .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+
+            // 인증 성공 시 AccessToken과 RefreshToken을 JWT로 생성
             String accessToken = jwtService.generateAccessToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
 
@@ -100,9 +115,6 @@ public class AuthService {
         // 4. 새로운 AccessToken 발급
         String newAccessToken = jwtService.reissueAccessToken(user);
 
-        // 5. RefreshToken 재발급 (필요시)
-        // - 여기서는 재발급하지 않고 기존 RefreshToken 유지
-
         return JwtDto.TokenResponse.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(refreshToken) // 기존 RefreshToken 유지
@@ -114,6 +126,7 @@ public class AuthService {
 
     // 로그아웃
     public void logout(String accessToken) {
+        // 헤더에서 토큰 추출 후 해당 토큰은 Redis 블랙리스트에 등록, RefreshToken 삭제
         if (accessToken != null && accessToken.startsWith("Bearer ")) {
             accessToken = accessToken.substring(7);
         }
