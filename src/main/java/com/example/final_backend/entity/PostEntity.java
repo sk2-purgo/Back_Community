@@ -21,8 +21,8 @@ public class PostEntity {
 
     // 사용자 식별 번호
     @ManyToOne
-    @JoinColumn(name = "users")
-    private UserEntity userId;
+    @JoinColumn(name = "userId")
+    private UserEntity user;
 
     // 게시물 제목
     private String title;
@@ -35,9 +35,6 @@ public class PostEntity {
 
     // 게시물 수정 일자
     private LocalDateTime updatedAt;
-
-    // 게시물 이미지
-    private String image;
 
     // 게시물 조회수
     private int count;

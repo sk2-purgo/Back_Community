@@ -19,7 +19,7 @@ public class CommentEntity {
 
     // 사용자 식별 번호
     @ManyToOne
-    @JoinColumn(name="users")
+    @JoinColumn(name="userId")
     private UserEntity user;
 
     // 게시물 식별 번호

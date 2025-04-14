@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="badwordlogs")
+@Table(name="badwordLogs")
 @Data
 public class BadwordLogEntity {
     // 비속어 사용 로그 식별 번호
@@ -20,18 +20,18 @@ public class BadwordLogEntity {
 
     // 사용자 식별 번호
     @ManyToOne
-    @JoinColumn(name = "users")
-    private UserEntity userId;
+    @JoinColumn(name = "userId")
+    private UserEntity user;
 
     // 게시물 식별 번호
     @OneToOne
-    @JoinColumn(name = "posts")
-    private PostEntity postId;
+    @JoinColumn(name = "postId")
+    private PostEntity post;
 
     // 댓글 식별 번호
     @OneToOne
-    @JoinColumn(name = "comments")
-    private CommentEntity commentId;
+    @JoinColumn(name = "commentId")
+    private CommentEntity comment;
 
     // 사용한 비속어
     private String originalWord;

@@ -3,9 +3,11 @@ package com.example.final_backend.security;
 import com.example.final_backend.entity.UserEntity;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
@@ -32,7 +34,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;  // 권한 없으면 null 또는 빈 리스트
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override public boolean isAccountNonExpired() { return true; }
