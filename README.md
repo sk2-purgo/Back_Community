@@ -1,4 +1,4 @@
-# Backend_ChatSound
+# Backend_purgo
 ## Member
 - 송보민(PL)
 - 구강현
