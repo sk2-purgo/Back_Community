@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -142,4 +143,27 @@ public class AuthService {
     public boolean isNameDuplicate(String username) {
         return authRepository.findByUsername(username).isPresent();
     }
+
+    // 아이디 찾기
+    public String findIdByEmail(String email) {
+        UserEntity user = authRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일로 가입된 사용자가 없습니다."));
+        return user.getId();  // 로그인용 ID 반환
+    }
+
+    // 비밀번호 재설정
+    @Transactional
+    public void resetPassword(String id, String email, String newPw) {
+        UserEntity user = authRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("아이디가 존재하지 않습니다."));
+
+        if (!user.getEmail().equals(email)) {
+            throw new IllegalArgumentException("이메일이 일치하지 않습니다.");
+        }
+
+        user.setPw(passwordEncoder.encode(newPw));
+        user.setUpdatedAt(LocalDateTime.now());
+        authRepository.save(user);
+    }
+
 }

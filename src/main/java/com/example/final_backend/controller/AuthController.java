@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -77,8 +79,21 @@ public class AuthController {
         return ResponseEntity.ok("사용 가능한 닉네임 입니다.");
     }
 
-    @GetMapping("/test-auth")
-    public ResponseEntity<String> testAuth() {
-        return ResponseEntity.ok("인증 성공! 보호된 리소스에 접근했습니다.");
+    // 아이디 찾기
+    @PostMapping("/findId")
+    public ResponseEntity<String> findIdByEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String id = authService.findIdByEmail(email);
+        return ResponseEntity.ok(id);
+    }
+
+    // 비밀번호 재설정
+    @PostMapping("/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
+        String id = request.get("id");
+        String email = request.get("email");
+        String newPw = request.get("newPw");
+        authService.resetPassword(id, email, newPw);
+        return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
     }
 }
