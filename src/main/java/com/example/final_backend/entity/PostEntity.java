@@ -21,8 +21,8 @@ public class PostEntity {
 
     // 사용자 식별 번호
     @ManyToOne
-    @JoinColumn(name = "users")
-    private UserEntity userId;
+    @JoinColumn(name = "userId")
+    private UserEntity user;
 
     // 게시물 제목
     private String title;

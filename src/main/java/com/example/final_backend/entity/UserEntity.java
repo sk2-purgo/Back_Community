@@ -45,7 +45,7 @@ public class UserEntity{
 
 
     // 게시물과 1대다 양방향 연결
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PostEntity> post;
 
     // 댓글과 1대다 양방향 연결
