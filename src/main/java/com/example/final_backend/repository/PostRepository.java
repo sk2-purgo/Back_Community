@@ -9,9 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-
-
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Integer> {
@@ -23,4 +22,8 @@ public interface PostRepository extends JpaRepository<PostEntity, Integer> {
     // 내 게시글 (로그인한 사용자의 ID 기준)
     Page<PostEntity> findByUserId_Id(String userId, Pageable pageable);
 
+    // 특정 사용자의 게시물 목록
+    List<PostEntity> findByUserId_Id(String userId);
+
+    Optional<Object> findByPostId(int postId);
 }

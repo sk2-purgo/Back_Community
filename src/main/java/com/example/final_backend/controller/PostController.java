@@ -1,7 +1,6 @@
 package com.example.final_backend.controller;
 
 import com.example.final_backend.dto.PostDto;
-
 import com.example.final_backend.security.CustomUserDetails;
 import com.example.final_backend.service.PostService;
 import lombok.RequiredArgsConstructor;
