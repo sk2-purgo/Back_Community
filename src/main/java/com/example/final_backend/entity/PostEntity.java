@@ -40,9 +40,6 @@ public class PostEntity {
     // 게시물 수정 일자
     private LocalDateTime updatedAt;
 
-    // 게시물 이미지
-    private String image;
-
     // 게시물 조회수
     private int count;
 

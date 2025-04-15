@@ -3,9 +3,11 @@ package com.example.final_backend.security;
 import com.example.final_backend.entity.UserEntity;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 사용자 정보를 Spring Security에서 사용할 수 있게 변환해주는 객체
@@ -44,7 +46,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;  // 권한 없으면 null 또는 빈 리스트
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override public boolean isAccountNonExpired() { return true; }
