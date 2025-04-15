@@ -58,10 +58,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/post/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/post/update/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/search").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/post/my").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/post/update/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/search").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/post/my").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

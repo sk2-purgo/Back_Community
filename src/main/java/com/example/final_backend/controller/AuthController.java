@@ -19,7 +19,7 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
 
-    // 회원 가입
+    // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody AuthDto dto) {
         authService.signup(dto);
