@@ -47,7 +47,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
         String userId = jwtService.extractUsername(token);
 
-        // 3. SecurityContext에 인증이 없는 경우에만 실행행
+        // 3. SecurityContext에 인증이 없는 경우에만 실행
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // 4. DB에서 사용자 조회 -> 토큰 검증증
             UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
