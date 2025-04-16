@@ -62,6 +62,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/post/update/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/search").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/post/my").authenticated()
+                        // 게시글 관련 인증 경로
+                        .requestMatchers(HttpMethod.POST, "/post/create").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/post/update/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/post/delete/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/post/my").authenticated()
+
+                        // 유저 관련 인증 경로
+                        .requestMatchers("/user/**").authenticated()
+
+                        // 댓글 관련 인증 경로
+                        .requestMatchers("/comment/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
