@@ -15,7 +15,7 @@ import java.util.Collections;
 
 /**
  * Spring Security에서 사용자 인증을 위한 UserDetailsService의 구현체
- * - loadUserByUsername : DB에서 사용자 조회 후 CustomUserDetails 반환환
+ * - loadUserByUsername : DB에서 사용자 조회 후 CustomUserDetails 반환
  */
 
 @Service

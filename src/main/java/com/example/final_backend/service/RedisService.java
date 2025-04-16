@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 public class RedisService {
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     private static final String ACCESS_TOKEN_PREFIX = "access:";
     private static final String REFRESH_TOKEN_PREFIX = "refresh:";

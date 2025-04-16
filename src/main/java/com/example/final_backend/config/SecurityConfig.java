@@ -57,12 +57,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // 사용자 관리 관련 인증 경로
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/post/update/**").authenticated()
+
+                        // 검색 관련 인증 경로
                         .requestMatchers(HttpMethod.GET, "/api/search").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/post/my").authenticated()
+
                         // 게시글 관련 인증 경로
+                        .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/post/create").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/post/update/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/post/delete/**").authenticated()
