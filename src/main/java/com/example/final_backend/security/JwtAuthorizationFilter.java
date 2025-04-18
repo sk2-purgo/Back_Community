@@ -49,7 +49,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         // 3. SecurityContext에 인증이 없는 경우에만 실행
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // 4. DB에서 사용자 조회 -> 토큰 검증증
+            // 4. DB에서 사용자 조회 -> 토큰 검증
             UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
 
             // validateAccessToken 메서드는 블랙리스트 확인을 포함
