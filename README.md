@@ -8,6 +8,10 @@
 - 정혜지       :  게시글 CRUD, 검색, ERD, Query
 - 이은비(보조)  :  댓글 CRUD, ERD
 
+## 기본 설정
+- application.properties 파일 생성
+- 노션 -> 백엔드 설정/application.properties 참고
+
 ## 로컬 Docker 설치
 - docker run --name mysql-db -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mysql:8.4
 - docker run -d --name redis -p 6379:6379 redis:7-alpine
