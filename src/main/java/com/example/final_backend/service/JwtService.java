@@ -46,9 +46,13 @@ public class JwtService {
         claims.put("tokenType", "access");
 
         return Jwts.builder()
+                //위에서 설정한 사용자 정보들 추가
                 .setClaims(claims)
+                //토큰의 subject 필드에는 사용자 ID 저장
                 .setSubject(userEntity.getId())
+                //토큰 발행 시간
                 .setIssuedAt(new Date(System.currentTimeMillis()))
+                //만료 시간 설정 – expirationMs는 application.properties에서 설정
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpirationMs()))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -57,6 +61,7 @@ public class JwtService {
     // RefreshToken 발급 및 Redis에 저장
     public String generateRefreshToken(UserEntity userEntity) {
         Map<String, Object> claims = new HashMap<>();
+        // 토큰을 구분하기 위해 tokenType만 넣음
         claims.put("tokenType", "refresh");
 
         String refreshToken = Jwts.builder()
