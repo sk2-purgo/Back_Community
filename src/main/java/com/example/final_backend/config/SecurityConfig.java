@@ -97,7 +97,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:3000"); // 프론트 주소
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(true); //쿠키, 인증 헤더 등을 프론트엔드에서 사용할 수 있도록 허용
 
         configuration.addExposedHeader("Authorization");
         configuration.addExposedHeader("Refresh-Token");
