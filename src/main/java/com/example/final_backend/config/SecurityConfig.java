@@ -79,7 +79,7 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            System.out.println("🔒 접근 거부됨! 이유: " + accessDeniedException.getMessage());
+                            System.out.println("접근 거부됨! 이유: " + accessDeniedException.getMessage());
                             response.sendError(HttpServletResponse.SC_FORBIDDEN);
                         })
                 )
