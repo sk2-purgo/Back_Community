@@ -26,8 +26,12 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "회원가입 성공")
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody AuthDto dto) {
-        authService.signup(dto);
-        return ResponseEntity.ok("회원가입이 완료되었습니다");
+        try {
+            authService.signup(dto);
+            return ResponseEntity.ok("회원가입이 완료되었습니다");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // 로그인

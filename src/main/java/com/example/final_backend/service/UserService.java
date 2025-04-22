@@ -20,13 +20,13 @@ import java.time.LocalDateTime;
 public class UserService {
     private final AuthRepository authRepository;
 
-    // ✅ 프로필 정보 조회
+    // 프로필 정보 조회
     public UserEntity getProfile(String userId) {
         return authRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자 정보를 찾을 수 없습니다."));
     }
 
-    // ✅ 프로필 정보 수정
+    // 프로필 정보 수정
     @Transactional
     public void updateProfile(String userId, AuthDto dto) {
         UserEntity user = authRepository.findById(userId)
