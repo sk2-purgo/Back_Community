@@ -24,33 +24,63 @@ repositories {
 }
 
 dependencies {
-    // JWT 처리, 버전은 참고
+    // JWT 관련 라이브러리 (토큰 생성, 파싱, 서명 등 처리용)
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'             // 내부 구현체
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'           // JSON 직렬화/역직렬화 지원 (jackson 기반)
 
-    // 회원가입 이메일 인증
+    // Spring Security: 인증/인가 보안 처리 (JWT와 함께 사용)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // 이메일 인증 및 전송을 위한 스프링 메일 스타터
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.0.5'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-    
+
+    // JPA를 통한 ORM 기능 (Entity와 DB 간 자동 매핑)
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // redis
+    // DB -----------
+
+    // MySQL JDBC 드라이버
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // Redis 캐시 및 세션 저장소 활용 (토큰 블랙리스트, 인증 캐시 등에 사용)
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    // 파일 I/O 유틸 (이미지 이름 저장/확장자 파악 등)
+    // ---------------
+
+    // 파일 관련 유틸 기능 제공 (파일 이름, 확장자 추출, 복사 등)
     implementation 'commons-io:commons-io:2.11.0'
 
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // 웹 애플리케이션 구축에 필요한 기본 스타터 (REST API 구현 등)
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 컴파일 시 Lombok 어노테이션 지원 (예: @Getter, @Builder 등)
     compileOnly 'org.projectlombok:lombok'
+
+    // 개발 편의 기능 제공
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // Lombok 어노테이션 프로세서 설정 (컴파일 시 코드 생성)
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'io.projectreactor:reactor-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+
+    // JUnit 플랫폼 런처 (테스트 실행 시 사용)
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // swagger - 추가
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+
+    // 테스트 ------------
+
+    // 기본적인 테스트 프레임워크 설정 (JUnit 등)
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // 리액터 테스트용 (WebFlux 사용 시 Reactor 스트림 테스트용)
+    testImplementation 'io.projectreactor:reactor-test'
+
+    // Spring Security 기능에 대한 테스트 지원
+    testImplementation 'org.springframework.security:spring-security-test'
+
 }
 
 tasks.named('test') {

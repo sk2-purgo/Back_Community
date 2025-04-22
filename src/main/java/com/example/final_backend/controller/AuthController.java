@@ -3,6 +3,8 @@ package com.example.final_backend.controller;
 import com.example.final_backend.dto.AuthDto;
 import com.example.final_backend.dto.JwtDto;
 import com.example.final_backend.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +22,21 @@ public class AuthController {
     private final AuthService authService;
 
     // 회원가입
+    @Operation(summary = "회원가입", description = "회원 정보를 받아 회원가입을 진행합니다.")
+    @ApiResponse(responseCode = "200", description = "회원가입 성공")
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody AuthDto dto) {
-        authService.signup(dto);
-        return ResponseEntity.ok("회원가입이 완료되었습니다");
+        try {
+            authService.signup(dto);
+            return ResponseEntity.ok("회원가입이 완료되었습니다");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // 로그인
+    @Operation(summary = "로그인", description = "회원 정보를 받아 로그인을 진행하고 로그인 성공 시 토큰을 발급합니다.")
+    @ApiResponse(responseCode = "200", description = "로그인 성공")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody JwtDto.LoginRequest loginRequest) {
         try {
@@ -42,6 +52,8 @@ public class AuthController {
     }
 
     // Access 토큰 재발급(백엔드 테스트용)
+    @Operation(summary = "토큰 재발급", description = "Refresh Token을 받아 인가 확인 후 토큰을 재발급합니다.")
+    @ApiResponse(responseCode = "200", description = "토큰 재발급 성공")
     @PostMapping("/refresh")
     public ResponseEntity<String> refreshToken(@RequestBody JwtDto.RefreshTokenRequest request) {
         try {
@@ -58,6 +70,8 @@ public class AuthController {
 
 
     // 로그아웃
+    @Operation(summary = "로그아웃", description = "회원 정보를 받아 로그아웃을 진행하고 발급된 토큰을 삭제 및 블랙리스트 처리합니다.")
+    @ApiResponse(responseCode = "200", description = "로그아웃 성공")
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String accessToken) {
         authService.logout(accessToken);
@@ -65,6 +79,8 @@ public class AuthController {
     }
 
     // 아이디 중복 검사
+    @Operation(summary = "아이디 중복 검사", description = "사용자가 입력한 ID가 중복되었는지 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "아이디 중복 검사 성공")
     @GetMapping("/checkId")
     public ResponseEntity<String> checkId(@RequestParam String id) {
         boolean isDuplicate = authService.isIdDuplicate(id);
@@ -75,6 +91,8 @@ public class AuthController {
     }
 
     // 닉네임 중복 검사
+    @Operation(summary = "닉네임 중복 검사", description = "사용자가 입력한 닉네임이 중복되었는지 확인합니다.")
+    @ApiResponse(responseCode = "200", description = "닉네임 중복 검사 성공")
     @GetMapping("/checkName")
     public ResponseEntity<String> checkName(@RequestParam String username) {
         boolean isDuplicate = authService.isNameDuplicate(username);
@@ -85,6 +103,8 @@ public class AuthController {
     }
 
     // 아이디 찾기
+    @Operation(summary = "아이디 찾기", description = "사용자가 입력한 ID가 기존에 존재했는지 확인 합니다.")
+    @ApiResponse(responseCode = "200", description = "아이디 찾기 성공")
     @PostMapping("/findId")
     public ResponseEntity<String> findIdByEmail(@RequestBody Map<String, String> request) {
         String email = request.get("email");
@@ -93,6 +113,8 @@ public class AuthController {
     }
 
     // 비밀번호 재설정
+    @Operation(summary = "비밀번호 재설정", description = "사용자의 id와 email을 확인해 사용자가 원하는 비밀번호로 재설정 합니다.")
+    @ApiResponse(responseCode = "200", description = "비밀번호 재설정 성공")
     @PostMapping("/resetPassword")
     public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
         String id = request.get("id");

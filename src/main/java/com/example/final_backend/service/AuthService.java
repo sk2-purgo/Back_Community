@@ -42,9 +42,14 @@ public class AuthService {
     // 회원가입
     @Transactional
     public void signup(AuthDto dto) {
+        // 아이디 중복 확인
+        if (authRepository.findById(dto.getId()).isPresent()) {
+            throw new IllegalArgumentException("아이디가 중복입니다.");
+        }
+
         // 이메일 중복 확인
         if (authRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+            throw new IllegalArgumentException("이메일이 중복입니다.");
         }
 
         // 사용자 엔티티 생성 및 저장
@@ -62,6 +67,7 @@ public class AuthService {
         // 이메일 전송
         sendWelcomeEmail(user.getEmail(), user.getUsername());
     }
+
 
     // 로그인
     public JwtDto.TokenResponse login(JwtDto.LoginRequest loginRequest) {
