@@ -2,6 +2,8 @@ package com.example.final_backend.controller;
 
 import com.example.final_backend.dto.PostDto;
 import com.example.final_backend.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +22,11 @@ public class SearchController {
 
     private final PostService postService;
 
+    @Operation(
+            summary = "게시글 검색",
+            description = "키워드를 기준으로 제목 또는 내용에 해당하는 게시글을 검색합니다."
+    )
+    @ApiResponse(responseCode = "200", description = "검색된 게시글 목록이 성공적으로 반환됩니다.")
     @GetMapping
     public ResponseEntity<Page<PostDto.Response>> searchPosts(
             @RequestParam String keyword,

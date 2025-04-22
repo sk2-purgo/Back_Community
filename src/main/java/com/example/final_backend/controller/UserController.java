@@ -1,6 +1,7 @@
 package com.example.final_backend.controller;
 
 import com.example.final_backend.dto.AuthDto;
+import com.example.final_backend.dto.UserProfileDto;
 import com.example.final_backend.entity.UserEntity;
 import com.example.final_backend.security.CustomUserDetails;
 import com.example.final_backend.service.UserService;
@@ -20,9 +21,21 @@ public class UserController {
 
     // ✅ 프로필 조회
     @GetMapping("/profile")
-    public ResponseEntity<UserEntity> getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.ok(userService.getProfile(userDetails.getId()));
+    public ResponseEntity<UserProfileDto> getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserEntity user = userService.getProfile(userDetails.getId());
+
+        UserProfileDto dto = new UserProfileDto();
+        dto.setUserId(user.getUserId());
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setProfileImage(user.getProfileImage());
+        dto.setCreatedAt(user.getCreatedAt());
+        dto.setUpdatedAt(user.getUpdatedAt());
+
+        return ResponseEntity.ok(dto);  // 이제 오류 안 남
     }
+
 
     // ✅ 프로필 수정
     @PutMapping("/profile")
