@@ -1,5 +1,6 @@
 package com.example.final_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -49,18 +50,22 @@ public class UserEntity{
 
 
     // 게시물과 1대다 양방향 연결
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PostEntity> post;
 
     // 댓글과 1대다 양방향 연결
+    @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CommentEntity> comments;
 
     // 패널티 횟수 1대1 양방향 연결
+    @JsonManagedReference
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private PenaltyCountEntity penaltyCount;
 
     // 제한된 사용자 1대1 양방향 연결
+    @JsonManagedReference
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserLimitsEntity limits;
 }

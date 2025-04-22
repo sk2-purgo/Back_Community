@@ -16,7 +16,7 @@ public class PostDto {
     public static class Request {
         private String title;
         private String content;
-        private String image;
+        // private String image;
     }
 
     @Data

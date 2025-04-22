@@ -1,5 +1,6 @@
 package com.example.final_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,11 +24,13 @@ public class CommentEntity {
 
     // 사용자 식별 번호
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name="userId")
     private UserEntity user;
 
     // 게시물 식별 번호
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "postId")
     private PostEntity post;
 

@@ -23,15 +23,15 @@ public class CommentService {
     private final AuthRepository authRepository;
 
     // 게시글에 달린 댓글 목록 조회
-    public List<CommentDto.Response> getCommentsByPostId(int postId) {
+    public List<CommentDto.CommentResponse> getCommentsByPostId(int postId) {
         PostEntity post = (PostEntity) postRepository.findByPostId(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
         List<CommentEntity> comments = commentRepository.findByPost(post);
-        List<CommentDto.Response> response = new ArrayList<>();
+        List<CommentDto.CommentResponse> commentResponse = new ArrayList<>();
 
         for (CommentEntity comment : comments) {
-            CommentDto.Response dto = new CommentDto.Response();
+            CommentDto.CommentResponse dto = new CommentDto.CommentResponse();
             dto.setCommentId(comment.getCommentId());
             dto.setUserId(comment.getUser().getId());
             dto.setUsername(comment.getUser().getUsername());
@@ -39,35 +39,34 @@ public class CommentService {
             dto.setCreatedAt(comment.getCreatedAt());
             dto.setUpdatedAt(comment.getUpdatedAt());
 
-            response.add(dto);
+            commentResponse.add(dto);
         }
-
-        return response;
+        return commentResponse;
     }
 
     // 댓글 작성
     @Transactional
-    public int createComment(String userId, int postId, CommentDto.Request request) {
+    public void createComment(String userId, int postId, CommentDto.CommentRequest commentRequest) {
         UserEntity user = authRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        PostEntity post = (PostEntity) postRepository.findByPostId(postId)
+        PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
         CommentEntity comment = new CommentEntity();
         comment.setUser(user);
         comment.setPost(post);
-        comment.setContent(request.getContent());
+        comment.setContent(commentRequest.getContent());
         comment.setCreatedAt(LocalDateTime.now());
         comment.setUpdatedAt(LocalDateTime.now());
 
-        CommentEntity savedComment = commentRepository.save(comment);
-        return savedComment.getCommentId();
+        commentRepository.save(comment); // 그냥 저장만 하면 끝
     }
+
 
     // 댓글 수정
     @Transactional
-    public void updateComment(String userId, int commentId, CommentDto.Request request) {
+    public void updateComment(String userId, int commentId, CommentDto.CommentRequest commentRequest) {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
 
@@ -76,7 +75,7 @@ public class CommentService {
             throw new IllegalArgumentException("댓글 수정 권한이 없습니다.");
         }
 
-        comment.setContent(request.getContent());
+        comment.setContent(commentRequest.getContent());
         comment.setUpdatedAt(LocalDateTime.now());
 
         commentRepository.save(comment);

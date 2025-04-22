@@ -1,5 +1,6 @@
 package com.example.final_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class BadwordLogEntity {
 
     // 사용자 식별 번호
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "userId")
     private UserEntity user;
 
