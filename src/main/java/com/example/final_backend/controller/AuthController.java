@@ -3,6 +3,8 @@ package com.example.final_backend.controller;
 import com.example.final_backend.dto.AuthDto;
 import com.example.final_backend.dto.JwtDto;
 import com.example.final_backend.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,8 @@ public class AuthController {
     private final AuthService authService;
 
     // 회원가입
+    @Operation(summary = "회원가입", description = "회원 정보를 받아 회원가입을 진행합니다.")
+    @ApiResponse(responseCode = "200", description = "회원가입 성공")
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody AuthDto dto) {
         authService.signup(dto);
