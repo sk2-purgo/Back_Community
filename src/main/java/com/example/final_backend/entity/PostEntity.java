@@ -1,5 +1,7 @@
 package com.example.final_backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +28,7 @@ public class PostEntity {
     // 사용자 식별 번호
     @ManyToOne
     @JoinColumn(name = "userId")
+    @JsonBackReference
     private UserEntity user;
 
     // 게시물 제목
@@ -44,6 +47,7 @@ public class PostEntity {
     private int count;
 
     // 댓글과 1대다 양방향 연결
+    @JsonManagedReference
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<CommentEntity> comment;
 

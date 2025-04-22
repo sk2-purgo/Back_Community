@@ -11,14 +11,14 @@ public class CommentDto {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Request {
+    public static class CommentRequest {
         private String content;
     }
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Response {
+    public static class CommentResponse {
         private int commentId;
         private String userId;
         private String username;
