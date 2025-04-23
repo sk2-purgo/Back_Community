@@ -6,12 +6,15 @@ import com.example.final_backend.dto.PostDto;
 import com.example.final_backend.entity.PostEntity;
 import com.example.final_backend.entity.UserEntity;
 import com.example.final_backend.repository.PostRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import com.example.final_backend.dto.FilterResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,20 +26,39 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final AuthRepository authRepository;
+    private final ProfanityFilterService profanityFilterService;
 
     // 게시글 작성
     @Transactional
-    public PostDto.Response createPost(String userId, PostDto.Request request) {
+    public PostDto.Response createPost(String userId, PostDto.Request request) throws JsonProcessingException {
         UserEntity user = authRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + userId));
 
+        String rawTitleJson = profanityFilterService.filter(request.getTitle());
+        String rawContentJson = profanityFilterService.filter(request.getContent());
+
+        ObjectMapper mapper = new ObjectMapper();
+        FilterResponse filteredTitle = mapper.readValue(rawTitleJson, FilterResponse.class);
+        FilterResponse filteredContent = mapper.readValue(rawContentJson, FilterResponse.class);
+
         PostEntity post = new PostEntity();
         post.setUser(user);
-        post.setTitle(request.getTitle());
-        post.setContent(request.getContent());
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
         post.setCount(0);
+
+        String title = filteredTitle.getRewritten_text();
+        if (title.length() > 255) {
+            title = title.substring(0, 255);
+        }
+        post.setTitle(title);
+
+
+        String content = filteredContent.getRewritten_text();
+        if (content.length() > 1000) {
+            content = content.substring(0, 1000);
+        }
+        post.setContent(content);
 
         PostEntity savedPost = postRepository.save(post);
 

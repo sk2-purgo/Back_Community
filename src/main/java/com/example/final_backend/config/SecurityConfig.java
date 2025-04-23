@@ -66,6 +66,9 @@ public class SecurityConfig {
                                 "/swagger-resources/**",       // Swagger 리소스
                                 "/webjars/**"                  // Swagger 정적 리소스
                         ).permitAll()
+                        // 예외 처리 컨트롤러 경로 허용 (Spring Boot의 BasicErrorController가 /error를 처리)
+                        // 인증 실패/DB 오류 등 발생 시 403이 아닌 4xx/5xx 응답을 제대로 클라이언트에 전달하기 위함
+                        .requestMatchers("/error").permitAll()
 
                         // 검색 관련 인증 경로
                         .requestMatchers(HttpMethod.GET, "/api/search").permitAll()

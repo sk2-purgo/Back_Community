@@ -3,6 +3,7 @@ package com.example.final_backend.controller;
 import com.example.final_backend.dto.PostDto;
 import com.example.final_backend.security.CustomUserDetails;
 import com.example.final_backend.service.PostService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -56,7 +57,7 @@ public class PostController {
     public ResponseEntity<PostDto.Response> createPost(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody PostDto.Request request
-    ) {
+    ) throws JsonProcessingException {
         PostDto.Response response = postService.createPost(userDetails.getId(), request);
         return ResponseEntity.ok(response);
     }

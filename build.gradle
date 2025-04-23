@@ -81,6 +81,8 @@ dependencies {
     // Spring Security 기능에 대한 테스트 지원
     testImplementation 'org.springframework.security:spring-security-test'
 
+
+
 }
 
 tasks.named('test') {

@@ -1,1 +1,0 @@
-application.properties 때문에 없어지는 resources 파일 유지용 더미 파일
