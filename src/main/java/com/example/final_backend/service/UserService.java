@@ -1,6 +1,6 @@
 package com.example.final_backend.service;
 
-import com.example.final_backend.dto.AuthDto;
+import com.example.final_backend.dto.UpdateProfileDto;
 import com.example.final_backend.entity.UserEntity;
 import com.example.final_backend.repository.AuthRepository;
 import jakarta.transaction.Transactional;
@@ -28,7 +28,7 @@ public class UserService {
 
     // 프로필 정보 수정
     @Transactional
-    public void updateProfile(String userId, AuthDto dto) {
+    public void updateProfile(String userId, UpdateProfileDto dto) {
         UserEntity user = authRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자 정보를 찾을 수 없습니다."));
 
