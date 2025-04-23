@@ -19,7 +19,7 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
-    // ✅ 프로필 조회
+    // 프로필 조회
     @GetMapping("/profile")
     public ResponseEntity<UserProfileDto> getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
         UserEntity user = userService.getProfile(userDetails.getId());
@@ -37,7 +37,7 @@ public class UserController {
     }
 
 
-    // ✅ 프로필 수정
+    // 프로필 수정
     @PutMapping("/profile")
     public ResponseEntity<String> updateProfile(
             @AuthenticationPrincipal CustomUserDetails userDetails,

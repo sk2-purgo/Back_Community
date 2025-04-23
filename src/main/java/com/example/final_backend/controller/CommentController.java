@@ -22,7 +22,6 @@ public class CommentController {
     // 댓글 목록 조회
     @Operation(summary = "댓글 목록 조회", description = "특정 게시글에 작성된 모든 댓글을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "댓글 목록이 성공적으로 반환됩니다.")
-    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{postId}")
     public ResponseEntity<List<CommentDto.CommentResponse>> getCommentsByPostId(@PathVariable int postId) {
         return ResponseEntity.ok(commentService.getCommentsByPostId(postId));

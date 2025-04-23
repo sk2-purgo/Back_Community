@@ -81,7 +81,11 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").authenticated()
 
                         // 댓글 관련 인증 경로
-                        .requestMatchers("/comment/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/comment/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/comment/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/comment/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/comment/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
