@@ -93,16 +93,12 @@ public class PostService {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + postId));
 
-<<<<<<< HEAD
+
         // 조회수 증가
         if (increaseView) {
             post.setCount(post.getCount() + 1);
             postRepository.save(post);
         }
-=======
-        post.setCount(post.getCount() + 1);
-        postRepository.save(post);
->>>>>>> develop-from-upstream
 
         return mapToDto(post);
     }
