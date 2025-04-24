@@ -1,6 +1,5 @@
 package com.example.final_backend.service;
 
-
 import com.example.final_backend.repository.AuthRepository;
 import com.example.final_backend.dto.PostDto;
 import com.example.final_backend.entity.PostEntity;
@@ -10,11 +9,15 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +27,40 @@ public class PostService {
     private final PostRepository postRepository;
     private final AuthRepository authRepository;
 
+    private final String gatewayUrl = "http://localhost:8001/proxy/analyze";
+
+    // ✅ 욕설 필터링 함수 (FastAPI 호출)
+    private String getFilteredText(String text) {
+        try {
+            System.out.println("📤 FastAPI로 전송할 텍스트 (게시글): " + text);
+            RestTemplate restTemplate = new RestTemplate();
+
+            Map<String, String> body = new HashMap<>();
+            body.put("text", text);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
+            ResponseEntity<Map> response = restTemplate.postForEntity(gatewayUrl, entity, Map.class);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                Map<String, Object> result = response.getBody();
+                Boolean isAbusive = (Boolean) result.get("is_abusive");
+                String rewritten = (String) result.get("rewritten_text");
+
+                if (isAbusive != null && isAbusive) {
+                    System.out.println("🛑 욕설 감지됨 → 게시글 내용 정제됨");
+                    return rewritten;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("❌ FastAPI 요청 실패 (게시글): " + e.getMessage());
+        }
+
+        return text;
+    }
+
     // 게시글 작성
     @Transactional
     public PostDto.Response createPost(String userId, PostDto.Request request) {
@@ -32,14 +69,13 @@ public class PostService {
 
         PostEntity post = new PostEntity();
         post.setUser(user);
-        post.setTitle(request.getTitle());
-        post.setContent(request.getContent());
+        post.setTitle(getFilteredText(request.getTitle()));   // 제목 필터링
+        post.setContent(getFilteredText(request.getContent())); // 내용 필터링
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
         post.setCount(0);
 
         PostEntity savedPost = postRepository.save(post);
-
         return mapToDto(savedPost);
     }
 
@@ -57,7 +93,6 @@ public class PostService {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + postId));
 
-        // 조회수 증가
         post.setCount(post.getCount() + 1);
         postRepository.save(post);
 
@@ -81,13 +116,12 @@ public class PostService {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + postId));
 
-        // 작성자 확인
         if (!post.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("게시글 수정 권한이 없습니다.");
         }
 
-        post.setTitle(request.getTitle());
-        post.setContent(request.getContent());
+        post.setTitle(getFilteredText(request.getTitle()));
+        post.setContent(getFilteredText(request.getContent()));
         post.setUpdatedAt(LocalDateTime.now());
 
         PostEntity updatedPost = postRepository.save(post);
@@ -100,7 +134,6 @@ public class PostService {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + postId));
 
-        // 작성자 확인
         if (!post.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("게시글 삭제 권한이 없습니다.");
         }
@@ -134,11 +167,9 @@ public class PostService {
                 .map(this::mapToDto);
     }
 
-    //내 게시글 조회
+    // 내 게시글 조회
     public Page<PostDto.Response> getMyPosts(String userId, Pageable pageable) {
         return postRepository.findByUserId_Id(userId, pageable)
                 .map(this::mapToDto);
     }
-
-
 }

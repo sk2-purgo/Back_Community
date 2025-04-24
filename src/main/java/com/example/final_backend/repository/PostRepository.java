@@ -25,5 +25,6 @@ public interface PostRepository extends JpaRepository<PostEntity, Integer> {
     // 특정 사용자의 게시물 목록
     List<PostEntity> findByUserId_Id(String userId);
 
-    Optional<Object> findByPostId(int postId);
+    // orElseThrow() 사용 시 타입 오류 없이 PostEntity로 받을 수 있음
+    Optional<PostEntity> findByPostId(int postId);
 }
