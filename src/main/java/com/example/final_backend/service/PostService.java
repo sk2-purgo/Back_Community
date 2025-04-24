@@ -53,13 +53,15 @@ public class PostService {
 
     // 게시글 상세 조회
     @Transactional
-    public PostDto.Response getPostById(int postId) {
+    public PostDto.Response getPostById(int postId, boolean increaseView) {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + postId));
 
         // 조회수 증가
-        post.setCount(post.getCount() + 1);
-        postRepository.save(post);
+        if (increaseView) {
+            post.setCount(post.getCount() + 1);
+            postRepository.save(post);
+        }
 
         return mapToDto(post);
     }
