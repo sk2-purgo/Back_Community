@@ -77,6 +77,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/post/delete/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/post/my").authenticated()
 
+
                         // 유저 관련 인증 경로
                         .requestMatchers("/user/**").authenticated()
 
