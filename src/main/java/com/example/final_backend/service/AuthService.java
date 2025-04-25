@@ -1,9 +1,13 @@
 package com.example.final_backend.service;
 
+import com.example.final_backend.entity.PenaltyCountEntity;
+import com.example.final_backend.entity.UserLimitsEntity;
 import com.example.final_backend.repository.AuthRepository;
 import com.example.final_backend.dto.AuthDto;
 import com.example.final_backend.dto.JwtDto;
 import com.example.final_backend.entity.UserEntity;
+import com.example.final_backend.repository.PenaltyCountRepository;
+import com.example.final_backend.repository.UserLimitsRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -15,6 +19,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -37,7 +42,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final RedisService redisService;
+    private final UserLimitsRepository userLimitsRepository;
+    private final PenaltyCountRepository penaltyCountRepository;
 
     // 회원가입
     @Transactional
@@ -63,6 +69,24 @@ public class AuthService {
         user.setUpdatedAt(LocalDateTime.now());
 
         authRepository.save(user);
+
+        // 회원가입 시 기본 PenaltyCountEntity 생성
+        PenaltyCountEntity penalty = new PenaltyCountEntity();
+        penalty.setUser(user);
+        penalty.setPenaltyCount(0);
+        penalty.setLastUpdate(LocalDate.now());
+
+        penaltyCountRepository.save(penalty);
+
+        // 회원가입 시 기본 UserLimitsEntity 생성
+        UserLimitsEntity limits = new UserLimitsEntity();
+        limits.setUser(user);
+        limits.setIsActive(true); // 기본값 활성화 상태
+        limits.setStartDate(null);
+        limits.setEndDate(null);
+
+        userLimitsRepository.save(limits);
+
 
         // 이메일 전송
         sendWelcomeEmail(user.getEmail(), user.getUsername());
