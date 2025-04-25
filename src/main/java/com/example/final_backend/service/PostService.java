@@ -120,6 +120,7 @@ public class PostService {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + postId));
 
+        // 작성자 확인
         if (!post.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("게시글 수정 권한이 없습니다.");
         }
@@ -138,6 +139,7 @@ public class PostService {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + postId));
 
+        // 작성자 확인
         if (!post.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("게시글 삭제 권한이 없습니다.");
         }
