@@ -72,7 +72,16 @@ public class AuthService {
     // 로그인
     public JwtDto.TokenResponse login(JwtDto.LoginRequest loginRequest) {
         try {
+            //사용자가 입력한 아이디와 비밀번호를 UsernamePasswordAuthenticationToken 객체로
+            // 래핑하여 AuthenticationManager에게 전달함
+            // 즉 AuthenticationManager에게  "이 사용자(id/pw)를 인증해줘"라고 요청하는 거임
+
             // authenticationManager를 이용해 ID/PW 인증 시도
+            // 그 시도를 내부적으로 SecurityConfig.java에서
+            // 내부의 DaoAuthenticationProvider.authenticate() 호출함
+
+            //결국 authentication는 사용자가 입력한 id/pw로 인증 시도하고
+            //그 결과로 인증 성공 여부,사용자 정보,권한이 담긴 Authentication를 반환 받는것이 목적
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getId(),
