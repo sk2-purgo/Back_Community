@@ -8,11 +8,8 @@ import com.example.final_backend.entity.UserLimitsEntity;
 import com.example.final_backend.repository.AuthRepository;
 import com.example.final_backend.repository.PenaltyCountRepository;
 import com.example.final_backend.repository.UserLimitsRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 

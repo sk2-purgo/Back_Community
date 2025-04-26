@@ -2,7 +2,6 @@ package com.example.final_backend.controller;
 
 import com.example.final_backend.dto.UpdateProfileDto;
 import com.example.final_backend.dto.UserProfileDto;
-import com.example.final_backend.entity.UserEntity;
 import com.example.final_backend.security.CustomUserDetails;
 import com.example.final_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
