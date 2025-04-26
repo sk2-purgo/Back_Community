@@ -50,11 +50,11 @@ public class CommentService {
 
                 System.out.println("📦 FastAPI 응답 전체: " + result);
 
-                // ✅ final_decision 기준으로 판단
+                // final_decision 기준으로 판단
                 Object decision = result.get("final_decision");
                 Boolean isAbusive = decision != null && decision.toString().equals("1");
 
-                // ✅ result 객체 안의 rewritten_text 추출
+                // result 객체 안의 rewritten_text 추출
                 Map<String, Object> resultInner = (Map<String, Object>) result.get("result");
                 String rewritten = resultInner != null ? (String) resultInner.get("rewritten_text") : text;
 

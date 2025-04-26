@@ -29,6 +29,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final AuthRepository authRepository;
+    private final RestTemplate purgoRestTemplate;
     private final BadwordLogRepository badwordLogRepository;
     private final UserService userService;
 
@@ -38,25 +39,27 @@ public class PostService {
     // 욕설 필터링 함수 (FastAPI 호출)
     private String getFilteredText(String text, UserEntity user, PostEntity post) {
         try {
-            RestTemplate restTemplate = new RestTemplate();
+            System.out.println("📤 FastAPI로 전송할 텍스트 (게시글): " + text);
+
             Map<String, String> body = new HashMap<>();
             body.put("text", text);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
-            ResponseEntity<Map> response = restTemplate.postForEntity(gatewayUrl, entity, Map.class);
+            ResponseEntity<Map> response = purgoRestTemplate.postForEntity(gatewayUrl, entity, Map.class);
+
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 Map<String, Object> result = response.getBody();
 
                 System.out.println("📦 FastAPI 응답 전체: " + result);
 
-                // ✅ final_decision 기준으로 판단
+                // final_decision 기준으로 판단
                 Object decision = result.get("final_decision");
                 Boolean isAbusive = decision != null && decision.toString().equals("1");
 
-                // ✅ result 객체 안의 rewritten_text 추출
+                // result 객체 안의 rewritten_text 추출
                 Map<String, Object> resultInner = (Map<String, Object>) result.get("result");
                 String rewritten = resultInner != null ? (String) resultInner.get("rewritten_text") : text;
 
@@ -151,6 +154,7 @@ public class PostService {
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다: " + postId));
 
+        // 작성자 확인
         if (!post.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("게시글 수정 권한이 없습니다.");
         }

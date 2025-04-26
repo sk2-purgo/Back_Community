@@ -5,9 +5,9 @@
 - 시연용 커뮤니티 backend code
 
 ## Member
-- 송보민(PL)   :  마이페이지, DB 연결(MySQL, Redis), JWT, 초기 설정 보수, ERD
-- 구강현       :  사용자 관리, JWT, 초기 설정, ERD, Query, 문서 작성 및 정리(Notion)
-- 정혜지       :  게시글 CRUD, 검색, ERD, Query
+- 송보민(PL)   :  마이페이지, DB 연결(MySQL, Redis), JWT, 초기 설정 보수, ERD , 프록시 서버 구현, ai 연동
+- 구강현       :  사용자 관리, JWT, 초기 설정, ERD, Query, 문서 작성 및 정리(Notion), ai 기능 연결(욕설 카운트, 기능 제한)
+- 정혜지       :  게시글 CRUD, 검색, ERD, Query , swagger
 - 이은비(보조)  :  댓글 CRUD, ERD
 
 ## 기본 설정
@@ -32,7 +32,6 @@
 | **데이터베이스**     | MySQL, Redis             | RDBMS 및 토큰 저장/블랙리스트 처리용 인메모리 캐시 DB        |
 | **ORM**            | JPA (Hibernate)          | 객체-관계 매핑을 통해 DB와 연동                              |
 | **이메일 발송**      | Spring Mail              | 회원가입 환영 이메일 발송                                    |
-| **설정 관리**        | application.properties    | JWT, DB, 메일 등 설정 정보 관리                              |
 
 ---
 
