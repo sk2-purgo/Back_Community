@@ -27,15 +27,13 @@ public class CommentService {
     private final AuthRepository authRepository;
     private final BadwordLogRepository badwordLogRepository;
     private final UserService userService;
+    private final RestTemplate purgoRestTemplate;
 
-    // 중계서버 호출 url
     @Value("${proxy.server.url}")
     private String gatewayUrl;
 
-    // FastAPI 중계서버 호출 메서드
     private String refineIfNeeded(String text, UserEntity user, PostEntity post, CommentEntity comment) {
         try {
-            RestTemplate restTemplate = new RestTemplate();
             Map<String, String> body = new HashMap<>();
             body.put("text", text);
 
@@ -43,18 +41,16 @@ public class CommentService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
 
-            ResponseEntity<Map> response = restTemplate.postForEntity(gatewayUrl, entity, Map.class);
+            ResponseEntity<Map<String, Object>> response = purgoRestTemplate.postForEntity(gatewayUrl, entity, (Class<Map<String, Object>>) (Class<?>) Map.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 Map<String, Object> result = response.getBody();
 
                 System.out.println("📦 FastAPI 응답 전체: " + result);
 
-                // final_decision 기준으로 판단
                 Object decision = result.get("final_decision");
                 Boolean isAbusive = decision != null && decision.toString().equals("1");
 
-                // result 객체 안의 rewritten_text 추출
                 Map<String, Object> resultInner = (Map<String, Object>) result.get("result");
                 String rewritten = resultInner != null ? (String) resultInner.get("rewritten_text") : text;
 
@@ -82,7 +78,6 @@ public class CommentService {
         return text;
     }
 
-    // 게시글에 달린 댓글 목록 조회
     public List<CommentDto.CommentResponse> getCommentsByPostId(int postId) {
         PostEntity post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
@@ -103,13 +98,11 @@ public class CommentService {
         return commentResponse;
     }
 
-    // 댓글 작성
     @Transactional
     public void createComment(String userId, int postId, CommentDto.CommentRequest commentRequest) {
         UserEntity user = authRepository.findById(userId).orElseThrow();
         PostEntity post = postRepository.findById(postId).orElseThrow();
 
-        // 제한 여부 확인
         userService.checkUserLimit(user);
 
         CommentEntity comment = new CommentEntity();
@@ -118,14 +111,13 @@ public class CommentService {
         comment.setCreatedAt(LocalDateTime.now());
         comment.setUpdatedAt(LocalDateTime.now());
         comment.setContent(commentRequest.getContent());
-        comment = commentRepository.save(comment); // 먼저 저장
+        comment = commentRepository.save(comment);
 
         String refined = refineIfNeeded(commentRequest.getContent(), user, post, comment);
         comment.setContent(refined);
         commentRepository.save(comment);
     }
 
-    // 댓글 수정
     @Transactional
     public void updateComment(String userId, int commentId, CommentDto.CommentRequest commentRequest) {
         CommentEntity comment = commentRepository.findById(commentId)
@@ -137,7 +129,6 @@ public class CommentService {
 
         UserEntity user = comment.getUser();
 
-        // 제한 여부 확인
         userService.checkUserLimit(user);
 
         comment.setContent(commentRequest.getContent());
@@ -146,7 +137,6 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    // 댓글 삭제
     @Transactional
     public void deleteComment(String userId, int commentId) {
         CommentEntity comment = commentRepository.findById(commentId)
