@@ -26,6 +26,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final AuthRepository authRepository;
+    private final RestTemplate purgoRestTemplate;
 
     private final String gatewayUrl = "http://localhost:8001/proxy/analyze";
 
@@ -33,7 +34,6 @@ public class PostService {
     private String getFilteredText(String text) {
         try {
             System.out.println("📤 FastAPI로 전송할 텍스트 (게시글): " + text);
-            RestTemplate restTemplate = new RestTemplate();
 
             Map<String, String> body = new HashMap<>();
             body.put("text", text);
@@ -42,7 +42,8 @@ public class PostService {
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
-            ResponseEntity<Map> response = restTemplate.postForEntity(gatewayUrl, entity, Map.class);
+            ResponseEntity<Map> response = purgoRestTemplate.postForEntity(gatewayUrl, entity, Map.class);
+
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 Map<String, Object> result = response.getBody();
