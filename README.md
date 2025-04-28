@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=192&section=header&text=PURGO%20backend&fontSize=90&animation=fadeIn&fontColor=CFD6DD)
+![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=192&section=header&text=PURGO%20backend&fontSize=90&animation=fadeIn&fontColor=FFF)
 
 
 <img src="https://img.shields.io/badge/redis-%23DC382D.svg?&style=for-the-badge&logo=redis&logoColor=white" />
