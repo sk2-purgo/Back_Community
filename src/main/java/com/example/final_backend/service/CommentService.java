@@ -109,15 +109,15 @@ public class CommentService {
         return commentResponse;
     }
 
-    // 댓글 생성
+    // 댓글 작성
     @Transactional
-    public void createComment(String userId, int postId, CommentDto.CommentRequest commentRequest) {
+    public CommentDto.CommentResponse createComment(String userId, int postId, CommentDto.CommentRequest commentRequest) {
         UserEntity user = authRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
-        // 제한된 사용자 차단
+        // 사용자 제한 여부 확인
         userService.checkUserLimit(user);
 
         // 댓글 엔티티 생성 및 저장 (commentId 확보용)
@@ -135,12 +135,41 @@ public class CommentService {
 
         // 최종 저장
         commentRepository.save(comment);
+
+        /*
+        프론트에서 사용자 횟수 제한 시 화면에서도 제한을 하기 위해 필요한 데이터 값
+        penaltyCount, endDate 를 전달
+         */
+
+        // 제한 종료시간 추출
+        LocalDateTime endDate = null;
+        if (user.getLimits() != null) {
+            endDate = user.getLimits().getEndDate();
+        }
+
+        // 패널티 횟수 추출
+        int penaltyCount = 0;
+        if (user.getPenaltyCount() != null) {
+            penaltyCount = user.getPenaltyCount().getPenaltyCount();
+        }
+
+        return CommentDto.CommentResponse.builder()
+                .commentId(comment.getCommentId())
+                .userId(comment.getUser().getId())
+                .username(comment.getUser().getUsername())
+                .content(comment.getContent())
+                .createdAt(comment.getCreatedAt())
+                .updatedAt(comment.getUpdatedAt())
+                // 프론트 전달용 데이터
+                .penaltyCount(penaltyCount)
+                .endDate(endDate)
+                .build();
     }
 
 
     // 댓글 수정
     @Transactional
-    public void updateComment(String userId, int commentId, CommentDto.CommentRequest commentRequest) {
+    public CommentDto.CommentResponse updateComment(String userId, int commentId, CommentDto.CommentRequest commentRequest) {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
 
@@ -162,6 +191,30 @@ public class CommentService {
         comment.setUpdatedAt(LocalDateTime.now());
 
         commentRepository.save(comment);
+
+        // endDate 추출
+        LocalDateTime endDate = null;
+        if (user.getLimits() != null) {
+            endDate = user.getLimits().getEndDate();
+        }
+
+        // penaltyCount 추출
+        int penaltyCount = 0;
+        if (user.getPenaltyCount() != null) {
+            penaltyCount = user.getPenaltyCount().getPenaltyCount();
+        }
+
+        return CommentDto.CommentResponse.builder()
+                .commentId(comment.getCommentId())
+                .userId(comment.getUser().getId())
+                .username(comment.getUser().getUsername())
+                .content(comment.getContent())
+                .createdAt(comment.getCreatedAt())
+                .updatedAt(comment.getUpdatedAt())
+                // 프론트 전달용 데이터
+                .penaltyCount(penaltyCount)
+                .endDate(endDate)
+                .build();
     }
 
 
