@@ -118,13 +118,7 @@ public class CommentService {
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
         // 제한된 사용자 차단
-        UserLimitsEntity limits = user.getLimits();
-        if (limits != null && Boolean.FALSE.equals(limits.getIsActive())) {
-            LocalDateTime now = LocalDateTime.now();
-            if (limits.getEndDate() != null && now.isBefore(limits.getEndDate())) {
-                throw new IllegalStateException("욕설 사용 5회로 24시간 동안 게시글 또는 댓글을 작성할 수 없습니다.");
-            }
-        }
+        userService.checkUserLimit(user);
 
         // 댓글 엔티티 생성 및 저장 (commentId 확보용)
         CommentEntity comment = new CommentEntity();
@@ -150,31 +144,23 @@ public class CommentService {
         CommentEntity comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
 
-        // 사용자 권한 확인
         if (!comment.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("댓글 수정 권한이 없습니다.");
         }
 
         UserEntity user = comment.getUser();
+        PostEntity post = comment.getPost();
 
-        // 제한된 사용자일 경우 수정 금지
-        UserLimitsEntity limits = user.getLimits();
-        if (limits != null && Boolean.FALSE.equals(limits.getIsActive())) {
-            LocalDateTime now = LocalDateTime.now();
-            if (limits.getEndDate() != null && now.isBefore(limits.getEndDate())) {
-                throw new IllegalStateException("욕설 사용 5회로 24시간 동안 게시글 또는 댓글을 작성할 수 없습니다.");
-            }
-        }
+        // 사용자 제한 여부 확인
+        userService.checkUserLimit(user);
 
-        // 욕설 필터링 (comment 넘겨서 BadwordLog 기록 가능)
-        PostEntity post = comment.getPost(); // 댓글에 연결된 게시글 정보 가져오기
+        // 욕설 필터링 + 로그 저장 + 패널티 적용
         String refined = getFilteredText(commentRequest.getContent(), user, post, comment);
 
-        // 내용 수정
+        // 내용 반영
         comment.setContent(refined);
         comment.setUpdatedAt(LocalDateTime.now());
 
-        // 최종 저장
         commentRepository.save(comment);
     }
 
