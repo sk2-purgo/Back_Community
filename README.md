@@ -39,12 +39,19 @@
 
 
 ## 로컬 Docker 설치
-- docker run --name mysql-db -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mysql:8.4
-- docker run -d --name redis -p 6379:6379 redis:7-alpine
+- Mysql
+     - docker run --name mysql-db -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mysql:8.4
+          - 쿼리 : query.sql
+
+- Redis
+     - docker run -d --name redis -p 6379:6379 redis:7-alpine
+
 
 
 ## 프로젝트 기간
 - 2025.03.26 ~ 2025.06.05
+
+
 
 # 툴체인 & 프레임워크
 
