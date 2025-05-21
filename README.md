@@ -36,6 +36,8 @@
 ## 기본 설정
 - application.properties 파일 생성
 - 노션 -> 백엔드 설정/application.properties 참고
+- java 17
+- Spring Boot 3.4.4
 
 
 ## 로컬 Docker 설치
