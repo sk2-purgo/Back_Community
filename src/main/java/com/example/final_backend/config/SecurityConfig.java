@@ -112,9 +112,9 @@ public class SecurityConfig {
     // CORS 세부 설정(예: 로컬 프론트 3000 허용)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        String frontendUrl = dotenv.get("FRONT_URL");
+        //String frontendUrl = dotenv.get("FRONT_URL");
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin(frontendUrl);  // 프론트 주소
+        configuration.addAllowedOrigin("http://43.203.14.194");  // 프론트 주소
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true); //쿠키, 인증 헤더 등을 프론트엔드에서 사용할 수 있도록 허용
