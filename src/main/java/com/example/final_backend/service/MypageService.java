@@ -5,7 +5,6 @@ import com.example.final_backend.entity.UserEntity;
 import com.example.final_backend.repository.UserRepository;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
