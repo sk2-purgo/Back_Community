@@ -28,10 +28,10 @@ public class CheckBadwordService {
     private final UserPenaltyService userPenaltyService;
     private final BadwordLogRepository badwordLogRepository;
 
-    @Value("${PURGO_PROXY_BASE_URL}")
+    @Value("${proxy.base-url}")
     private String baseUrl;
 
-    @Value("${PURGO_CLIENT_API_KEY}")
+    @Value("${proxy.client-api-key}")
     private String apiKey;
 
     @Transactional
