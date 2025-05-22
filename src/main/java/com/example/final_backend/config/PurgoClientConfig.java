@@ -1,6 +1,7 @@
 package com.example.final_backend.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import io.github.cdimascio.dotenv.Dotenv;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,16 +15,15 @@ import org.springframework.web.client.RestTemplate;
  */
 
 @Configuration
+@RequiredArgsConstructor
 public class PurgoClientConfig {
-
-    @Value("${PURGO_CLIENT_API_KEY}")
-    private String apiKey;
-
-    @Value("${PURGO_PROXY_BASE_URL}")
-    private String baseUrl;
+    private final Dotenv dotenv;
 
     @Bean
     public RestTemplate purgoRestTemplate(RestTemplateBuilder builder) {
+        String apiKey = dotenv.get("PURGO_CLIENT_API_KEY");
+        String baseUrl = dotenv.get("PURGO_PROXY_BASE_URL");
+
         return builder
                 .rootUri(baseUrl)
                 .additionalInterceptors((request, body, execution) -> {
@@ -32,6 +32,4 @@ public class PurgoClientConfig {
                 })
                 .build();
     }
-
-
 }

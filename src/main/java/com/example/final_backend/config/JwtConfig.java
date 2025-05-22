@@ -1,5 +1,6 @@
 package com.example.final_backend.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,15 +12,17 @@ import org.springframework.context.annotation.Configuration;
  */
 
 @Configuration
-// application.properties에 jwt.secret 등으로 시작하는 항목 자동 주입
-@ConfigurationProperties(prefix = "jwt")
 @Getter
 @Setter
 public class JwtConfig {
-    // JWT 비밀키
-    private String secret;
-    // AccessToken 유효 기간 지정 (1시간)
-    private long expirationMs = 3600000; // 기본값 1시간
-    // RefreshToken 유효 기간 지정 (7일)
-    private long refreshExpirationMs = 604800000; // 7일
+
+    private final String secret;
+    private final long expirationMs;
+    private final long refreshExpirationMs;
+
+    public JwtConfig(Dotenv dotenv) {
+        this.secret = dotenv.get("JWT_SECRET");
+        this.expirationMs = Long.parseLong(dotenv.get("JWT_EXPIRATION_MS", "3600000")); // 기본값: 1시간
+        this.refreshExpirationMs = Long.parseLong(dotenv.get("JWT_REFRESH_EXPIRATION_MS", "604800000")); // 기본값: 7일
+    }
 }

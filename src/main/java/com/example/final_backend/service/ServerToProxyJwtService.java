@@ -3,6 +3,7 @@ package com.example.final_backend.service;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -25,17 +26,13 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ServerToProxyJwtService {
-
-    @Value("${server-to-proxy.jwt.secret}")
-    private String secretKeyString;
-
-    @Value("${server-to-proxy.jwt.expiration}")
-    private long expirationMillis;
+    private final Dotenv dotenv;
 
     private Key secretKey;
 
     @PostConstruct
     public void init() {
+        String secretKeyString = dotenv.get("PROXY_JWT_SECRET");
         this.secretKey = Keys.hmacShaKeyFor(secretKeyString.getBytes());
     }
 
@@ -50,7 +47,8 @@ public class ServerToProxyJwtService {
 
     // JSON 문자열을 받아서 JWT를 생성하는 메서드
     public String generateTokenFromJson(String jsonBody) {
-        long nowMillis = System.currentTimeMillis();
+        long nowMillis = System.currentTimeMillis() - 3000;
+        long expirationMillis = Long.parseLong(dotenv.get("PROXY_JWT_EXPIRATION"));
         Date now = new Date(nowMillis);
         Date expiryDate = new Date(nowMillis + expirationMillis);
 

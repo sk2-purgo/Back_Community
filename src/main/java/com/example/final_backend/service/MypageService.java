@@ -3,6 +3,7 @@ package com.example.final_backend.service;
 import com.example.final_backend.dto.ProfileDto;
 import com.example.final_backend.entity.UserEntity;
 import com.example.final_backend.repository.UserRepository;
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class MypageService {
     private final UserRepository userRepository;
-
-    // 프로필 이미지 URL
-    @Value("${PROFILE_IMAGE_URL}")
-    private String profileImageUrl;
+    private final Dotenv dotenv;
 
     // 프로필 정보 조회
     public ProfileDto.UserProfile getProfile(String userId) {
@@ -57,6 +55,7 @@ public class MypageService {
 
         file.transferTo(savedFile); // 예외 발생 가능하므로 throws IOException
 
+        String profileImageUrl = dotenv.get("PROFILE_IMAGE_URL");
         String imageUrl = profileImageUrl + filename;  // 배포 시 도메인으로 변경 필요
         user.setProfileImage(imageUrl);
         user.setUpdatedAt(LocalDateTime.now());

@@ -2,6 +2,7 @@ package com.example.final_backend.config;
 
 import com.example.final_backend.security.JwtAuthorizationFilter;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,10 +36,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
-
-    // 프론트 주소
-    @Value("${FRONT_URL}")
-    private String frontendUrl;
+    private final Dotenv dotenv;
 
     // 비밀번호 암호화
     @Bean
@@ -115,6 +113,7 @@ public class SecurityConfig {
     // CORS 세부 설정(예: 로컬 프론트 3000 허용)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        String frontendUrl = dotenv.get("FRONT_URL");
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin(frontendUrl);  // 프론트 주소
         configuration.addAllowedMethod("*");
