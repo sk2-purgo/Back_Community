@@ -70,6 +70,9 @@ public class SecurityConfig {
                                 "/webjars/**"                  // Swagger 정적 리소스
                         ).permitAll()
 
+                        // 프론트 / 허용
+                        .requestMatchers("/", "/index.html").permitAll()
+
                         // 검색 관련 인증 경로
                         .requestMatchers(HttpMethod.GET, "/api/search").permitAll()
 
