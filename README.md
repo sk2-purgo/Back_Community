@@ -1,4 +1,4 @@
-![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=192&section=header&text=PURGO%20backend&fontSize=90&animation=fadeIn&fontColor=FFF)
+![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&height=192&section=header&text=Community%20Backend&fontSize=70&animation=fadeIn&fontColor=FFF)
 
 
 <p align="center">
@@ -13,7 +13,8 @@
   <img src="https://img.shields.io/badge/github-%23181717.svg?&style=for-the-badge&logo=github&logoColor=white"/>
   <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/>
   <img src="https://img.shields.io/badge/postman-%23FF6C37.svg?&style=for-the-badge&logo=postman&logoColor=white"/>
-  <img src="https://img.shields.io/badge/swagger-%2385EA2D.svg?&style=for-the-badge&logo=swagger&logoColor=black"/>
+  <img src="https://img.shields.io/badge/spring%20security-%23007A33.svg?&style=for-the-badge&logo=springsecurity&logoColor=white"/>
+  <img src="https://img.shields.io/badge/JWT-white?style=for-the-badge&logo=jsonwebtokens&logoColor=black"/>
 </p>
 
 
@@ -39,11 +40,12 @@
 - java 17 
 - Spring Boot 3.4.4
 - gradle-8.13
+- 
 
 
 ## 로컬 Docker 설치
 - Mysql
-     - docker run --name mysql-db -e MYSQL_ROOT_PASSWORD=1234 -p 3306:3306 -d mysql:8.4
+     - docker run --name mysql-db -e MYSQL_ROOT_PASSWORD={your_password} -p 3306:3306 -d mysql:8.4
           - 쿼리 : query.sql
 
 - Redis
@@ -63,7 +65,8 @@
 | 분류               | 사용 기술                 | 설명                                            |
 |--------------------|-----------------------|--------------------------------------------------|
 | **백엔드 프레임워크** | Spring Boot           | REST API, 보안, DB 연동을 스타터 의존성 기반으로 통합 구성                    |
-| **보안**            | Spring Security + JWT | 필터 체인 기반 인증/인가 흐름 분리와 JWT 토큰 검증으로 세션 없는 인증 상태 유지 및 서버 부하 감소 구성               |
+| **보안**            | Spring Security | 필터 체인 기반 인증/인가 흐름 구현, 세션리스 구조로 인증 처리             |
+| **인증**            | JWT | 클라이언트 인증 상태를 유지하기 위한 토큰 기반 인증 방식           |
 | **데이터베이스**     | MySQL                 | 관계형 데이터 정합성과 트랜잭션 처리에 특화된 구조                  |
 | **데이터베이스**     | Redis                 | 인메모리 기반으로 고속 키-값 저장, TTL 설정, 구조 단순화에 최적화               |
 | **ORM**            | JPA (Hibernate)       | 자바 객체로 DB를 직접 제어하고 유지보수성을 높이는 ORM 접근             |
@@ -149,7 +152,6 @@ JwtAuthorizationFilter
 |--------|----------------------------|---------------------------------|
 | GET    | /api/user/profile          | 내 프로필 조회                  |
 | PUT    | /api/user/profile          | 내 프로필 수정                  |
-| POST   | /api/user/profile/upload   | 프로필 이미지 업로드            |
 | DELETE | /api/user/delete           | 회원 탈퇴                        |
 | POST   | /api/user/penaltyCount     | 패널티 횟수 조회                 |
 | POST   | /api/user/limits           | 사용자 제한 정보 조회           |
@@ -165,7 +167,8 @@ JwtAuthorizationFilter
 | POST   | /api/post/create              | 게시글 작성                    |
 | PUT    | /api/post/update/{postId}     | 게시글 수정                    |
 | DELETE | /api/post/delete/{postId}     | 게시글 삭제                    |
-| GET    | /api/post/my                  | 내가 작성한 게시글 조회        |
+| GET    | /api/post/my                  | 작성 게시글 조회             |
+
 
 ---
 
@@ -249,7 +252,7 @@ backend/
         │                   └── UserPenaltyService.java
         └── resources/
             ├── application.properties
-            └── dummy.txt  
+            └── dummy.txt
 ```
 
 
