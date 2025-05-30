@@ -249,7 +249,7 @@ backend/
         │                   └── UserPenaltyService.java
         └── resources/
             ├── application.properties
-            └── dummy.txt
+            └── dummy.txt  
 ```
 
 
