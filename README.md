@@ -254,6 +254,28 @@ backend/
             ├── application.properties
             └── dummy.txt
 ```
+##  욕설 필터링 방식
 
+- `BadwordFilterService`는 FastAPI 서버에 메시지를 POST 요청으로 전달
+- FastAPI 응답 구조 예시:
+```json
+{
+  "isAbusive": true,
+  "originalText": "욕설 포함된 문장",
+  "rewrittenText": "***"
+}
+```
+- 욕설이 감지되면 `chatService.incrementBadwordCount()` 실행
+- FastAPI 장애 시 원문 그대로 반환
 
 ---
+## 핵심 기능 요약
+
+- 게시글 작성, 수정, 삭제, 조회
+- 댓글 작성, 수정, 삭제
+- 게시글 및 댓글 욕설 필터링 (FastAPI 연동)
+- JPA를 통한 DB 자동 매핑 및 저장
+- 비속어 사용 횟수 저장 및 관리
+- 일정 횟수 초과 시 사용자 제한 처리
+- JWT 기반 사용자 인증 및 토큰 갱신
+
